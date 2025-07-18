@@ -1,4 +1,4 @@
-package org.zuzukov.synthetichumancorestarter.command;
+package org.zuzukov.synthetichumancorestarter.commands;
 
 import jakarta.validation.Valid;
 import org.slf4j.Logger;

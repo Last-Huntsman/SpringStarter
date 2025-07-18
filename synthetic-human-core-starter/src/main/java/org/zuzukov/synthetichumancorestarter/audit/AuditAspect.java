@@ -11,8 +11,8 @@ import java.util.Arrays;
 
 @Component
 @org.aspectj.lang.annotation.Aspect
-public class Aspect {
-    Logger logger = LoggerFactory.getLogger(Aspect.class);
+public class AuditAspect {
+    Logger logger = LoggerFactory.getLogger(AuditAspect.class);
     @Autowired
     AuditProperties auditProperties;
 

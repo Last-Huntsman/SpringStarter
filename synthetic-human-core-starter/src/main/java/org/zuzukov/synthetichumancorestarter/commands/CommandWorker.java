@@ -1,4 +1,4 @@
-package org.zuzukov.synthetichumancorestarter.command;
+package org.zuzukov.synthetichumancorestarter.commands;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
