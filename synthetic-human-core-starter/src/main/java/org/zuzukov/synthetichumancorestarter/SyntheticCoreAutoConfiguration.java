@@ -1,7 +1,6 @@
 package org.zuzukov.synthetichumancorestarter;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +9,7 @@ import org.zuzukov.synthetichumancorestarter.audit.AuditProperties;
 import org.zuzukov.synthetichumancorestarter.commands.CommandProcessor;
 import org.zuzukov.synthetichumancorestarter.commands.CommandQueue;
 import org.zuzukov.synthetichumancorestarter.commands.CommandWorker;
+import org.zuzukov.synthetichumancorestarter.error.GlobalExceptionHandler;
 
 
 @Configuration
@@ -39,6 +39,5 @@ public class SyntheticCoreAutoConfiguration {
     public AuditAspect auditAspect() {
         return new AuditAspect();
     }
-
 
 }
