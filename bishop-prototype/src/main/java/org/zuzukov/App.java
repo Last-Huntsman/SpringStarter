@@ -9,7 +9,7 @@ import org.zuzukov.synthetichumancorestarter.commands.Command;
 import java.util.Arrays;
 
 
-@SpringBootApplication(scanBasePackages = "org.zuzukov")
+@SpringBootApplication
 public class App {
     public static void main(String[] args) {
         SpringApplication.run(App.class, args);
