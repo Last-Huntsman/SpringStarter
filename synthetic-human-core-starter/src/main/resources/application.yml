@@ -1,5 +1,8 @@
+weyland:
+  audit:
+    audit-type: CONSOLE
+    kafka-topic: weyland.audit
+#
 #logging:
 #  level:
-#    org.springdoc: DEBUG
-#    org.springframework.web: DEBUG
-#    root: INFO
+#    org.zuzukov: INFO

@@ -18,6 +18,8 @@ target/
 *.iws
 *.iml
 *.ipr
+synthetic-human-core-starter/target
+bishop-prototype/target
 
 ### NetBeans ###
 /nbproject/private/
