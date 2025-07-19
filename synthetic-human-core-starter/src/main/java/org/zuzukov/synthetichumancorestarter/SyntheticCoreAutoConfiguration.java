@@ -9,7 +9,8 @@ import org.zuzukov.synthetichumancorestarter.audit.AuditProperties;
 import org.zuzukov.synthetichumancorestarter.commands.CommandProcessor;
 import org.zuzukov.synthetichumancorestarter.commands.CommandQueue;
 import org.zuzukov.synthetichumancorestarter.commands.CommandWorker;
-import org.zuzukov.synthetichumancorestarter.error.GlobalExceptionHandler;
+import org.zuzukov.synthetichumancorestarter.error.GlobalErrorHandler;
+
 
 @Configuration
 @EnableConfigurationProperties(AuditProperties.class)
@@ -22,8 +23,8 @@ public class SyntheticCoreAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public GlobalExceptionHandler globalExceptionHandler() {
-        return new GlobalExceptionHandler();
+    public GlobalErrorHandler globalExceptionHandler() {
+        return new GlobalErrorHandler();
     }
 
     @Bean

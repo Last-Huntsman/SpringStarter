@@ -13,5 +13,7 @@ public @interface TImeValidator {
 
     String message() default "Invalid ISO 8601 date-time format";
 
+    Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
 }

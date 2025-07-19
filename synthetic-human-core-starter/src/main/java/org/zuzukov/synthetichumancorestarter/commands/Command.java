@@ -10,13 +10,13 @@ import org.zuzukov.synthetichumancorestarter.validator.TImeValidator;
 
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 public class Command {
     @NotBlank
     @Size(max = 1000)
     private String description;
 
     @NotNull
-    @Getter
     private Priority priority;
 
     @NotBlank
