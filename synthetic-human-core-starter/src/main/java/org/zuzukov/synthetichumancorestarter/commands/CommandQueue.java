@@ -13,18 +13,21 @@ public class CommandQueue {
     private Deque<Command> commandQueue = new LinkedList<>();
 
     public void push(@Valid Command command) {
-        if (!isFull()) throw new QueueOverflowException("Command queue overflow");
+        if (!isNotFull()) throw new QueueOverflowException("Command queue overflow");
         else commandQueue.add(command);
     }
     public void pushFront(@Valid Command command) {
-        if (!isFull()) throw new QueueOverflowException("Command queue overflow");
+        if (!isNotFull()) throw new QueueOverflowException("Command queue overflow");
         else commandQueue.addFirst(command);
     }
     public Command pop() {
         return commandQueue.poll();
     }
-
-    private boolean isFull() {
+    public int size() {
+        System.out.println(commandQueue.size());
+        return commandQueue.size();
+    }
+    private boolean isNotFull() {
         return QUEUELIMITED >= commandQueue.size();
     }
 

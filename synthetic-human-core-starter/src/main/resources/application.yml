@@ -2,6 +2,14 @@ weyland:
   audit:
     audit-type: CONSOLE
     kafka-topic: weyland.audit
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  metrics:
+    enable:
+      all: true
 #
 #logging:
 #  level:

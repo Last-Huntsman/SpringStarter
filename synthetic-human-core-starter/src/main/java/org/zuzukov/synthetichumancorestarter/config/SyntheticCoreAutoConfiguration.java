@@ -1,5 +1,6 @@
 package org.zuzukov.synthetichumancorestarter.config;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +11,7 @@ import org.zuzukov.synthetichumancorestarter.commands.CommandProcessor;
 import org.zuzukov.synthetichumancorestarter.commands.CommandQueue;
 import org.zuzukov.synthetichumancorestarter.commands.CommandWorker;
 import org.zuzukov.synthetichumancorestarter.error.GlobalErrorHandler;
+import org.zuzukov.synthetichumancorestarter.metrics.AndroidMetrics;
 
 
 @Configuration
@@ -26,11 +28,20 @@ public class SyntheticCoreAutoConfiguration {
     public GlobalErrorHandler globalExceptionHandler() {
         return new GlobalErrorHandler();
     }
+    @Bean
+    @ConditionalOnMissingBean
+    public AndroidMetrics androidMetrics() {
+        return new AndroidMetrics();
+    }
 
     @Bean
     @ConditionalOnMissingBean
-    public CommandWorker commandWorker(CommandQueue queue) {
-        return new CommandWorker(queue);
+    public CommandWorker commandWorker(
+            CommandQueue queue,
+            AndroidMetrics androidMetrics,
+            MeterRegistry meterRegistry
+    ) {
+        return new CommandWorker(queue, androidMetrics, meterRegistry);
     }
 
     @Bean

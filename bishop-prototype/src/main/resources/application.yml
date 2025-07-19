@@ -12,9 +12,16 @@ spring:
 
 weyland:
   audit:
-    audit-type: KAFKA
+    audit-type: CONSOLE
     kafka-topic: weyland.audit
-
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  metrics:
+    tags:
+      application: synthetic-bishop
 
 
 #logging:
