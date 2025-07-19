@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.zuzukov.synthetichumancorestarter.config.KafkaConfiguration;
+import org.zuzukov.synthetichumancorestarter.config.AuditKafkaSender;
 
 import java.util.Arrays;
 
@@ -17,7 +17,7 @@ public class AuditAspect {
     @Autowired
     AuditProperties auditProperties;
     @Autowired
-    KafkaConfiguration kafkaConfiguration;
+    AuditKafkaSender kafkaConfiguration;
 
     @Around("@annotation(WeylandWatchingYou)")
     public Object before(ProceedingJoinPoint joinPoint) throws Throwable {

@@ -24,7 +24,6 @@ public class CommandQueue {
         return commandQueue.poll();
     }
     public int size() {
-        System.out.println(commandQueue.size());
         return commandQueue.size();
     }
     private boolean isNotFull() {

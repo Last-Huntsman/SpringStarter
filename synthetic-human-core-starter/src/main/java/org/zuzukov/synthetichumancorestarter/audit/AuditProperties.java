@@ -17,6 +17,6 @@ public class AuditProperties {
 
     }
     private AuditType auditType = CONSOLE;
-    private String KafkaTopic = "weyland.audit";
+    private String kafkaTopic = "weyland.audit";
 
 }

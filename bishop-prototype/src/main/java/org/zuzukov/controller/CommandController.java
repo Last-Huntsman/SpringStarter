@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.zuzukov.service.ServiceCommand;
 import org.zuzukov.synthetichumancorestarter.audit.WeylandWatchingYou;
@@ -13,6 +14,7 @@ import org.zuzukov.synthetichumancorestarter.commands.Command;
 
 @RestController
 @RequestMapping("/api/commands")
+@Validated
 public class CommandController {
     @Autowired
     ServiceCommand serviceCommand;

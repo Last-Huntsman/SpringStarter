@@ -16,17 +16,14 @@ public class AndroidMetrics {
 
     private final Map<String, Counter> completedByAuthor = new ConcurrentHashMap<>();
 
-    private boolean gaugeRegistered = false;
 
     public void registerQueueSize(MeterRegistry registry, ThreadPoolExecutor threadPoolExecutor) {
-        if (!gaugeRegistered) {
             Gauge.builder("android.task.queue.size", threadPoolExecutor, executor -> executor.getQueue().size())
                     .description("Current thread pool task queue size")
                     .tag("application", "synthetic-bishop")
                     .register(registry);
 
 
-        }
     }
 
     public void taskCompletedBy(String author, MeterRegistry registry) {

@@ -9,7 +9,7 @@ import org.zuzukov.synthetichumancorestarter.audit.AuditProperties;
 
 @Component
 @RequiredArgsConstructor
-public class KafkaConfiguration {
+public class AuditKafkaSender {
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final AuditProperties properties;
 
