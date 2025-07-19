@@ -20,10 +20,11 @@ public class AuditAspect {
     public Object before(ProceedingJoinPoint joinPoint) throws Throwable {
         Object[] args = joinPoint.getArgs();
         Object result = joinPoint.proceed();
-        Object name = joinPoint.getSignature().getDeclaringType().getSimpleName();
+        Object name = joinPoint.getSignature().getName();
+        Object className = joinPoint.getTarget().getClass().getName();
         if (auditProperties.getAuditType() == AuditProperties.AuditType.CONSOLE) {
-            logger.info("[AUDIT] Method: {}, Args: {}, Result: {}", name, Arrays.toString(args), result==null?"":result.toString());
-        }
+            logger.info("[AUDIT] Class:{} Method: {}, Args: {}, Result: {}", className, name, Arrays.toString(args), result==null?"":result.toString());
+        } //TODO СДелать Kafka
 
         return result;
     }

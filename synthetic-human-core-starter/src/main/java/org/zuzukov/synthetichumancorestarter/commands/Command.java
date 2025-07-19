@@ -4,10 +4,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.zuzukov.synthetichumancorestarter.validator.TImeValidator;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Command {
@@ -16,6 +16,7 @@ public class Command {
     private String description;
 
     @NotNull
+    @Getter
     private Priority priority;
 
     @NotBlank
@@ -23,7 +24,7 @@ public class Command {
     private String author;
 
     @NotBlank
-//    @Pattern(regexp = "^[0-9\\-T:.Z]+$") // ISO 8601 //TODO Разобарться
+    @TImeValidator
     private String time;
 
 
@@ -38,7 +39,6 @@ public class Command {
     }
 
 }
-
 
 
 
