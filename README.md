@@ -1,187 +1,224 @@
-# <span style="font-size:1.6em">🤖 Bishop Prototype with Synthetic Human Core Starter</span>
+<div align="center">
+  <h1 style="font-family: 'Segoe UI', Roboto, Arial; color:#6C63FF; font-weight:800; letter-spacing:0.5px;">
+    🧠 Bishop Prototype
+  </h1>
+  <p style="font-size:16px; color:#444; max-width:820px; line-height:1.6;">
+    <b>Bishop</b> — микросервис, принимающий и обрабатывающий команды от синтетических агентов с аудированием действий
+    (консоль или Kafka), метриками и OpenAPI. Построен на собственном стартере <code>synthetic-human-core-starter</code>.
+  </p>
+  <img src="https://img.shields.io/badge/Java-21-007396?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Spring%20Boot-3.5.3-6DB33F?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Kafka-7.6.0-231F20?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Build-Maven-blue?style=for-the-badge" />
+</div>
 
-<p style="font-size:1.05em">
-  Добро пожаловать! Этот репозиторий содержит прототип системы управления командами с очередью и воркерами
-  на базе Spring Boot, а также стартер для аудита вызовов методов через AOP. Проект структурирован как
-  несколько независимых Maven-модулей/проектов, которые можно собирать и запускать отдельно.
-</p>
+<br/>
 
-<hr/>
+## ✨ Что внутри
 
-## 🔎 Обзор
+- ✅ **REST API** для создания команд (`/api/commands`)
+- ✅ **Очередь команд** с лимитом и возможностью приоритезации
+- ✅ **Аудит**: консольный и через **Kafka** (включаемый конфигурацией)
+- ✅ **OpenAPI/Swagger UI**: `http://localhost:8080/swagger-ui.html`
+- ✅ **Actuator + Prometheus** метрики: `/actuator/prometheus`
 
-- **Основной модуль (root):** `synthetic-human-core-starter` — Spring Boot приложение + библиотека-стартер с:
-  - AOP-аудитом вызовов методов через аннотацию `@WeylandWatchingYou`;
-  - Очередью команд (`CommandQueue`) и диспетчером-воркером (`CommandWorker`) на `ThreadPoolExecutor`;
-  - Валидацией входных данных (Jakarta Validation);
-  - Глобальной обработкой исключений.
-- **Модуль:** `bishop-prototype` — минимальное Spring Boot-приложение (демо/заготовка).
-- **Модуль:** `bi` — заготовка Maven-проекта (без кода, под будущие BI-компоненты).
+---
 
-<hr/>
+## 🧱 Модули проекта
 
-## 🧱 Структура репозитория
-
-```
-.
-├─ pom.xml                         # Spring Boot стартер + приложение (root)
-├─ src/main/java/org/zuzukov/synthetichumancorestarter/
-│  ├─ SyntheticHumanCoreStarterApplication.java
-│  ├─ audit/
-│  │  ├─ Aspect.java               # AOP аспект: аудит методов
-│  │  ├─ AuditProperties.java      # Настройки аудита (CONSOLE/KAFKA)
-│  │  └─ WeylandWatchingYou.java   # Аннотация для аудита
-│  ├─ command/
-│  │  ├─ Command.java              # Модель команды (валидация)
-│  │  ├─ CommandProcessor.java     # Обработка команд (CRITICAL/COMMON)
-│  │  ├─ CommandQueue.java         # Очередь команд
-│  │  ├─ CommandWorker.java        # Диспетчер-воркер (ThreadPoolExecutor)
-│  │  └─ Priority.java             # Приоритеты команд
-│  └─ error/
-│     ├─ GlobalExceptionHandler.java
-│     └─ QueueOverflowException.java
-│
-├─ bishop-prototype/
-│  ├─ pom.xml
-│  └─ src/main/resources/application.properties
-│
-└─ bi/
-   └─ pom.xml
+```text
+T1Task3/                         ← родительский Maven-проект (Java 21, Spring Boot 3.5.3)
+├── synthetic-human-core-starter ← стартер: аннотация и аспект аудита, очередь/процессор команд, метрики
+└── bishop-prototype             ← микросервис: REST-контроллер, сервис, Kafka listener, конфиги
 ```
 
-<hr/>
+### Ключевые классы
 
-## ✨ Возможности
+- `bishop-prototype`
+  - `CommandController` — POST `/api/commands`, принимает валидируемую модель `Command`, аннотирован `@WeylandWatchingYou`.
+  - `ServiceCommand` — делегирует обработку в `CommandProcessor` (стартера), тоже аудируется.
+  - `AuditKafkaListener` — слушает топик `${weyland.audit.kafka-topic}` при `weyland.audit.audit-type=KAFKA`.
 
-- **AOP-аудит**: логирование вызовов методов, их аргументов и результата по аннотации `@WeylandWatchingYou`.
-- **Очередь команд**: безопасная очередь с обработкой и переотправкой при переполнении пула.
-- **Воркеры**: многопоточная обработка через `ThreadPoolExecutor` с бэкофом при `RejectedExecutionException`.
-- **Валидация**: Jakarta Validation (`@NotBlank`, `@Size`, `@NotNull`) для модели `Command`.
-- **Глобальная обработка ошибок**: единый `@RestControllerAdvice` для стандартизации ответов.
+- `synthetic-human-core-starter`
+  - `@WeylandWatchingYou` — маркер-аннотация для аудита.
+  - `AuditAspect` — вокруг вызова: логирует в консоль или отправляет в Kafka.
+  - `Command`, `Priority`, `CommandQueue`, `CommandProcessor` — модель и обработка команд, метрики через Micrometer.
 
-<hr/>
+---
 
-## 🧩 Технологии
+## 🔌 API
 
-- **Java**: 17 (root) / 21 (модули) — рекомендуется Java 21 для совместимости
-- **Spring Boot**: 3.5.x (parent) / плагины 3.2.x указаны в свойствах
-- **AOP**, **Validation**, **Spring Web**
-- **Micrometer** (подключен), **Kafka clients** (для будущего аудита в Kafka)
-- **Lombok**
-- **Maven**
+### POST `/api/commands`
 
-<hr/>
+Создаёт новую команду.
 
-## 🚀 Быстрый старт
+Пример тела запроса:
 
-### 1) Предусловия
-- Java 21 (JDK 21)
-- Maven 3.9+
-
-Проверьте версии:
-```bash
-java -version
-mvn -v
-```
-
-### 2) Сборка
-Собрать каждый модуль можно отдельно, так как они независимы:
-```bash
-# В корне (соберёт root-модуль synthetic-human-core-starter)
-mvn clean package
-
-# Собрать bishop-prototype
-cd bishop-prototype && mvn clean package
-
-# Собрать bi
-cd ../bi && mvn clean package
-```
-
-### 3) Запуск
-- Запуск основного приложения (root):
-```bash
-# из корня репозитория
-mvn spring-boot:run
-```
-При старте `SyntheticHumanCoreStarterApplication` создаёт несколько команд и отправляет их в обработку `CommandProcessor` → `CommandQueue` → `CommandWorker`.
-
-- Запуск `bishop-prototype` (минимальная заготовка):
-```bash
-cd bishop-prototype
-mvn spring-boot:run
-```
-
-<hr/>
-
-## ⚙️ Конфигурация
-
-Настройки аудита в root-модуле управляются через `AuditProperties`:
-
-```properties
-# application.properties
-weyland.audit.audit-type=CONSOLE   # CONSOLE или KAFKA
-weyland.audit.kafka-topic=weyland.audit
-```
-
-По умолчанию включён режим **CONSOLE** — аудит выводится в логи.
-
-<hr/>
-
-## 🛠 Как подключить аудит к методу
-
-Отметьте метод аннотацией `@WeylandWatchingYou` — AOP-аспект залогирует имя класса/метода, аргументы и результат:
-
-```java
-import org.zuzukov.synthetichumancorestarter.audit.WeylandWatchingYou;
-
-public class MyService {
-
-    @WeylandWatchingYou
-    public String doWork(String param) {
-        return "result:" + param;
-    }
+```json
+{
+  "description": "Уничтожить цель до рассвета",
+  "priority": "CRITICAL",
+  "author": "T-800",
+  "time": "2025-07-18T22:00:00Z"
 }
 ```
 
-<hr/>
+- Swagger UI: [`http://localhost:8080/swagger-ui.html`](http://localhost:8080/swagger-ui.html)
 
-## 🧠 Внутренние детали
+---
 
-- **Command** — объект команды с валидацией полей (`description`, `priority`, `author`, `time`).
-- **CommandProcessor** — отправляет CRITICAL-команды сразу в лог, остальные — в очередь.
-- **CommandQueue** — двусторонняя очередь. В случае переполнения выбрасывает `QueueOverflowException`.
-- **CommandWorker** — отдельный поток, постоянно читает из очереди и отправляет задачи в `ThreadPoolExecutor` (2–4 потока). При `RejectedExecutionException` делает паузу и возвращает команду в начало очереди.
-- **GlobalExceptionHandler** — общий обработчик для ошибок валидации, переполнения очереди и прочих исключений.
+## 🛡️ Аудит (console / kafka)
 
-<hr/>
+Конфигурация в `application.yml`:
+
+```yaml
+weyland:
+  audit:
+    audit-type: CONSOLE   # или KAFKA
+    kafka-topic: weyland.audit
+```
+
+- При `CONSOLE` выводится лог уровня INFO, формируемый `AuditAspect`.
+- При `KAFKA` используется `AuditKafkaSender` (стартер) и `AuditKafkaListener` (микросервис) для чтения сообщений.
+
+Пример лога из Kafka listener:
+
+```text
+[ AUDIT FROM KAFKA] [AUDIT] Class: ... Method: ..., Args: [...], Result: ...
+```
+
+> ⚠️ Listener активируется условно по свойству `weyland.audit.audit-type=KAFKA`.
+
+---
+
+## 📊 Метрики и здоровье
+
+- Actuator доступен по `/actuator` (в `application.yml` включён `exposure: "*"`).
+- Prometheus scrape-джоб (см. `bishop-prototype/src/main/resources/prometheus.yml`):
+
+```yaml
+scrape_configs:
+  - job_name: 'synthetic-bishop'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['localhost:8080']
+```
+
+---
+
+## 🧰 Сборка и запуск
+
+### Вариант A: Локально (консольный аудит по умолчанию)
+
+```bash
+mvn clean install
+cd bishop-prototype
+java -jar target/bishop-prototype-0.0.1-SNAPSHOT.jar
+```
+
+### Вариант B: С Kafka (Docker Compose)
+
+```bash
+docker-compose up --build
+```
+
+Переменные окружения сервиса в Compose:
+
+```yaml
+SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+WEYLAND_AUDIT_AUDIT_TYPE: KAFKA
+WEYLAND_AUDIT_KAFKA_TOPIC: weyland.audit
+```
+
+Dockerfile использует двухэтапную сборку (Maven build → runtime JDK 21):
+
+```dockerfile
+FROM maven:3.9.6-eclipse-temurin-21-alpine AS build
+RUN mvn -pl bishop-prototype -am clean package -DskipTests
+...
+```
+
+---
+
+## ⚙️ Конфигурация (ключевые свойства)
+
+`bishop-prototype/src/main/resources/application.yml`:
+
+```yaml
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: auditor
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+weyland:
+  audit:
+    audit-type: CONSOLE
+    kafka-topic: weyland.audit
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  metrics:
+    tags:
+      application: synthetic-bishop
+```
+
+---
+
+## 🧭 Архитектура (обзор)
+
+```text
+Client → REST (CommandController) → ServiceCommand → CommandProcessor (starter)
+                                           │                  │
+                                           │        ┌─────────┴─────────┐
+                                           │        │    AuditAspect    │
+                                           │        └─────────┬─────────┘
+                                           │                  │
+                                           ▼                  ▼
+                                     Queue/Execute      Console or Kafka
+                                                           │
+                                                           ▼
+                                                  AuditKafkaListener (when KAFKA)
+```
+
+---
 
 ## 🧪 Тестирование
 
-Запуск тестов модуля:
-```bash
-mvn test          # в корне — для root-модуля
-cd bishop-prototype && mvn test
-cd ../bi && mvn test
-```
+- Юнит/интеграционные тесты могут быть добавлены для контроллера и процессора команд.
+- В текущей версии часть модульных тестов отключена в стартере (Surefire.skipTests=true), что ускоряет сборку.
 
-<hr/>
+---
 
-## 📦 Сборка артефактов
+## 🧾 Зависимости и версии
 
-Результаты сборки появятся в `target/` каждого модуля. Для root-модуля после `mvn package` вы получите исполняемый `jar`.
+- Java: 21
+- Spring Boot: 3.5.3
+- OpenAPI: `springdoc-openapi-starter-webmvc-ui` 2.8.8
+- Kafka: `spring-kafka`
+- Micrometer + Prometheus
 
-<hr/>
+---
 
-## 📜 Лицензия
+## 👨‍💻 Авторы
 
-Добавьте информацию о лицензии (при необходимости).
+- Проект разработан в рамках синтетической архитектуры Weyland.
 
-<hr/>
+---
 
-## 🙌 Благодарности
+## 🧩 Лицензия
 
-- Spring, AOP, и вдохновение от идеи «наблюдающего» Weyland 👁️
+MIT или подходящая корпоративная.
 
-<p align="center" style="font-size:1.1em">
-  <b>Удачной разработки!</b> ✨ Если понадобятся примеры контроллеров/API — дайте знать, добавлю.
-</p>
+<div align="center" style="margin-top:16px; color:#888;">
+  Сделано с ❤️ и <span style="color:#6C63FF; font-weight:700;">AOP</span> ✨
+</div>
